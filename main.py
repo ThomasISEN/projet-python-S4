@@ -8,6 +8,8 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtWidgets # 2D
 import csv
 import math
+import os
+
 
 
 
@@ -346,7 +348,71 @@ def IterationAlgo():
             test=ModifPosClusterForPoint(test,coordonnes_centroids_float_tableau)  #On re-associe chaque points à un centroids (nouvelle position)
             #print(coordonnes_centroids_float_tableau)
             drawV2(test,1920)
+            ResultatSomme=EvalutionQualite(test,coordonnes_centroids_float_tableau)
+
+    #Avant d'écrire il faut d'abord lire la donnée de la première ligne pour savoir si la somme est plus petite ou pas (Meilleur score)
+    ValeurAncienneSomme=read_first_line_csv("EcritureDonnees")
+    if(float(ValeurAncienneSomme[1])<ResultatSomme):
+        print("cas ou (ValeurAncienneSomme[1]<ResultatSomme (on ecrit pas)")
+    else:
+        print("Ecriture en cours ")
+        write_csv_file("EcritureDonnees",test,ResultatSomme) #Fin d'algo , on écrit dans le csv
                 
 
-IterationAlgo()
 
+
+
+def EvalutionQualite(points,AllCentroids):
+    NbPoint=len(points)
+    ResultatSomme=0
+    CalculDistanceEuclidienne=0
+    print("Evaluation en cours ")
+    for point in points:
+        #print(point)
+        #print(AllCentroids)
+        if(point[2]==AllCentroids[0][0] and point[3]==AllCentroids[0][1] ): #point 2 -> position x du centroids associé
+                                                                            #point 3 -> position y du centroid associé
+            
+            CalculDistanceEuclidienne=math.pow((point[0]-AllCentroids[0][0]),2)+math.pow((point[1]-AllCentroids[0][1]),2)
+            CalculDistanceEuclidienne=math.sqrt(CalculDistanceEuclidienne)
+        elif(point[2]==AllCentroids[1][0] and point[3]==AllCentroids[1][1] ):
+            
+            CalculDistanceEuclidienne=math.pow((point[0]-AllCentroids[1][0]),2)+math.pow((point[1]-AllCentroids[1][1]),2)
+            CalculDistanceEuclidienne=math.sqrt(CalculDistanceEuclidienne)
+        elif(point[2]==AllCentroids[2][0] and point[3]==AllCentroids[2][1] ):
+            CalculDistanceEuclidienne=math.pow((point[0]-AllCentroids[2][0]),2)+math.pow((point[1]-AllCentroids[2][1]),2)
+            CalculDistanceEuclidienne=math.sqrt(CalculDistanceEuclidienne)
+          
+        elif(point[2]==AllCentroids[3][0] and point[3]==AllCentroids[3][1] ):
+            CalculDistanceEuclidienne=math.pow((point[0]-AllCentroids[3][0]),2)+math.pow((point[1]-AllCentroids[3][1]),2)
+            CalculDistanceEuclidienne=math.sqrt(CalculDistanceEuclidienne)
+           
+        ResultatSomme+=CalculDistanceEuclidienne
+    print("Fin de calcul !!!!!!!!!!!!!!!")
+    print(ResultatSomme)
+   
+    return ResultatSomme
+
+
+
+
+def write_csv_file(NomFichier, data,ValeurSomme):
+    # Si le fichier n'existe pas, on le crée
+
+    with open(NomFichier, 'w', newline='') as csvfile:
+        Ecriture = csv.writer(csvfile)
+        construction=['x','y','centroid_x','centroid_x']
+        construction2=['Best Valeur for ValeurSomme =',ValeurSomme]
+        Ecriture.writerow(construction2)
+        Ecriture.writerow(construction)
+        for points in data:
+            Ecriture.writerow(points)
+   
+def read_first_line_csv(NomFichier):
+    with open(NomFichier, 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+        first_row = next(csvreader)
+        print(first_row)
+        return first_row
+
+IterationAlgo()
