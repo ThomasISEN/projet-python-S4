@@ -76,11 +76,17 @@ def trouver_min(tableau):
 
 
 
-def InitialisationCentroids(): #Tire au sort les index dans le tableau des coordonées 
-    Centroide1=random.randint(0, 400)
-    Centroide2=random.randint(0, 400)
-    Centroide3=random.randint(0, 400)
-    Centroide4=random.randint(0, 400)
+def InitialisationCentroids(version="1"): #Tire au sort les index dans le tableau des coordonées 
+    if(version=="1"):
+        Centroide1=random.randint(0, 400)
+        Centroide2=random.randint(0, 400)
+        Centroide3=random.randint(0, 400)
+        Centroide4=random.randint(0, 400)
+    elif(version=="2"):
+        Centroide1=random.randint(0, 60000)
+        Centroide2=random.randint(0, 60000)
+        Centroide3=random.randint(0, 60000)
+        Centroide4=random.randint(0, 60000)
     print("Les centroides au choisie les coordonees de tableau : "+str(Centroide1)+" "+str(Centroide2)+" "+str(Centroide3)+" "+str(Centroide4))
     coordonnes_centroids_index_tableau=[]
     coordonnes_centroids_index_tableau.append(Centroide1)
@@ -244,14 +250,15 @@ def ReturnNbPointWithCoo(points,AllCentroids,version="1"):
                 CooY_Sum[3]=CooY_Sum[3]+point[1]
                 CooZ_Sum[3]=CooZ_Sum[3]+point[2]
             else:
-                print("bug")
+                #print("bug")
+                continue
             #print(Nb_Point)
 
-    print("Affichage des découpages")
-    print(Nb_Point)
-    print(CooX_Sum)
-    print(CooY_Sum)
-    print(CooZ_Sum)
+    # print("Affichage des découpages")
+    # print(Nb_Point)
+    # print(CooX_Sum)
+    # print(CooY_Sum)
+    # print(CooZ_Sum)
     return Nb_Point,CooX_Sum,CooY_Sum,CooZ_Sum
    
     
@@ -312,19 +319,30 @@ def drawV2(samples, windowSize=1000, offset=(0, 0, 0)):
 	pg.exec()
 
 
-def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY):
+def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY,SumCooZ,version="1"):
     #print("Calcul de la nouvelle position")
     new_centroids = []
     index = 0
-    
-    for centroid in AllCentroids:
-        #print(Nb_Point)
-        cnpx = (1 / Nb_Point[index]) * SumCooX[index]
-        
-        cnpY = (1 / Nb_Point[index]) * SumCooY[index]
-        new_centroid = [cnpx, cnpY]
-        new_centroids.append(new_centroid)
-        index += 1
+    if(version=="1"):
+        for centroid in AllCentroids:
+            #print(Nb_Point)
+            cnpx = (1 / Nb_Point[index]) * SumCooX[index]
+            
+            cnpY = (1 / Nb_Point[index]) * SumCooY[index]
+            new_centroid = [cnpx, cnpY]
+            new_centroids.append(new_centroid)
+            index += 1
+    else:
+        for centroid in AllCentroids:
+            #print(Nb_Point)
+            cnpx = (1 / Nb_Point[index]) * SumCooX[index]
+            
+            cnpY = (1 / Nb_Point[index]) * SumCooY[index]
+            cnpZ= (1 / Nb_Point[index]) * SumCooZ[index]
+            new_centroid = [cnpx, cnpY,cnpZ]
+            new_centroids.append(new_centroid)
+            index += 1
+
     return new_centroids
 
 
@@ -336,15 +354,26 @@ def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY):
 
 #Où N_k est le nombre de points appartenant au cluster k.
     
-def ModifPosClusterForPoint(points,AllCentroids):
+def ModifPosClusterForPoint(points,AllCentroids,version="1"):
 
-    for i in range(len(points)):
-        # Assignation de chaque point au cluster le plus proche
-        ValeurAssignation=CalculDistance1Point(points[i],AllCentroids)
-        #print(ValeurAssignation)
-        #print(TableauCentroids[ValeurAssignation][0])
-        points[i][2]=AllCentroids[ValeurAssignation][0]
-        points[i][3]=AllCentroids[ValeurAssignation][1]
+    if(version=="1"):
+        for i in range(len(points)):
+            # Assignation de chaque point au cluster le plus proche
+            ValeurAssignation=CalculDistance1Point(points[i],AllCentroids)
+            #print(ValeurAssignation)
+            #print(TableauCentroids[ValeurAssignation][0])
+            points[i][2]=AllCentroids[ValeurAssignation][0]
+            points[i][3]=AllCentroids[ValeurAssignation][1]
+    else:
+        for i in range(len(points)):
+            # Assignation de chaque point au cluster le plus proche
+            ValeurAssignation=CalculDistance1Point(points[i],AllCentroids,"2")
+            #print(ValeurAssignation)
+            #print(TableauCentroids[ValeurAssignation][0])
+            points[i][3]=AllCentroids[ValeurAssignation][0]
+            points[i][4]=AllCentroids[ValeurAssignation][1]
+            points[i][5]=AllCentroids[ValeurAssignation][2]
+            #print(points[i])
     return points
     
 
@@ -378,8 +407,8 @@ def IterationAlgo():
                 
                 #print(coordonnes_centroids_index_tableau)
                 coordonnes_centroids_float_tableau=TransformeToCooFloat(coordonnes_centroids_index_tableau,test) #Float des centroids
-                #print("Apres la transformation en float des centroids")
-                #print(coordonnes_centroids_float_tableau)
+                print("Apres la transformation en float des centroids")
+                print(coordonnes_centroids_float_tableau)
             # ValeurIndex=CalculDistance1Point(test[2], coordonnes_centroids_float_tableau) #Cette ligne permet d'assigner un point à un centroid
             # print(coordonnes_centroids_float_tableau)
                 #print("Association des points aux centroids ")
@@ -410,7 +439,7 @@ def IterationAlgo():
                 print("Association des points aux centroids ")
                 test=AssignationPointsToCluster(test,coordonnes_centroids_float_tableau,version) #On assigne tous les points à un cluster (modif pour 3d)
                 #print(test)
-                #drawV2(test,1920)
+                drawV2(test,1920)
             else:
                 print("Choix invalide.")
            
@@ -422,7 +451,7 @@ def IterationAlgo():
                 SumCooX=CoupageDuRenvoie[1]
                 SumCooY=CoupageDuRenvoie[2]
 
-                coordonnes_centroids_float_tableau=CalculNewPosCentroids(test,coordonnes_centroids_float_tableau,Nb_point,SumCooX,SumCooY) #On recalcule les positions 
+                coordonnes_centroids_float_tableau=CalculNewPosCentroids(test,coordonnes_centroids_float_tableau,Nb_point,SumCooX,SumCooY,0) #On recalcule les positions 
                 #des clusters
                 print("Normalement apres iteration  :"+str(coordonnes_centroids_float_tableau))
 
@@ -430,26 +459,36 @@ def IterationAlgo():
 
                 test=ModifPosClusterForPoint(test,coordonnes_centroids_float_tableau)  #On re-associe chaque points à un centroids (nouvelle position)
                 #print(coordonnes_centroids_float_tableau)
+                print(test[1],test[2],test[3])
                 drawV2(test,1920)
                 ResultatSomme=EvalutionQualite(test,coordonnes_centroids_float_tableau)
             else:
                 print("Algo en 3d")
                 #print(test)
-                print(coordonnes_centroids_float_tableau)
+               
                 CoupageDuRenvoie=ReturnNbPointWithCoo(test,coordonnes_centroids_float_tableau,"2")
                 Nb_point=CoupageDuRenvoie[0]
                 SumCooX=CoupageDuRenvoie[1]
                 SumCooY=CoupageDuRenvoie[2]
                 SumCooZ=CoupageDuRenvoie[3]
-                print("Fin du premier tour de l'algo ") #Fonctionnel jusqu'à la 
-                coordonnes_centroids_float_tableau=CalculNewPosCentroids(test,coordonnes_centroids_float_tableau,Nb_point,SumCooX,SumCooY)
+                #print("Fin du premier tour de l'algo ") 
+                #-----------------------------------------------------------------------------------------------------------
+                coordonnes_centroids_float_tableau=CalculNewPosCentroids(test,coordonnes_centroids_float_tableau,Nb_point,SumCooX,SumCooY,SumCooZ,"2")
+                print("Coordonées des centroids à l'itération "+str(i)+" :"+str(coordonnes_centroids_float_tableau))
+                test=ModifPosClusterForPoint(test,coordonnes_centroids_float_tableau,"2")
+                #print("Fin d'algo en 3d")
+                #print(test)
+                drawV2(test,1920)
+
+
     #Avant d'écrire il faut d'abord lire la donnée de la première ligne pour savoir si la somme est plus petite ou pas (Meilleur score)
     ValeurAncienneSomme=read_first_line_csv("EcritureDonnees")
-    if(float(ValeurAncienneSomme[1])<ResultatSomme):
+    if(float(ValeurAncienneSomme[1])<0):
         print("cas ou (ValeurAncienneSomme[1]<ResultatSomme (on ecrit pas)")
     else:
         print("Ecriture en cours ")
-        write_csv_file("EcritureDonnees",test,ResultatSomme) #Fin d'algo , on écrit dans le csv
+        write_csv_file("EcritureDonnees",test,0) #Fin d'algo , on écrit dans le csv
+        #0=ResultatSomme
                 
 
 
