@@ -49,50 +49,27 @@ def transormeLectureInTableauFloat(tableau_str):
 
 
 
-def trouver_max(tableau):
-    max_val = -math.inf
-    test=0
-    for sous_tableau in tableau:
-        for valeur in sous_tableau:
-            if(test!=0):
-                
-                if (float(valeur) > max_val) :
-                    max_val = valeur
-        test=1
-    return max_val
-
-def trouver_min(tableau):
-    min_val = math.inf
-    test=0
-    for sous_tableau in tableau:
-        for valeur in sous_tableau:
-            if(test!=0):
-                
-                if (float(valeur) < min_val) :
-                    min_val = valeur
-        test=1
-    return min_val
 
 
 
-
-def InitialisationCentroids(version="1"): #Tire au sort les index dans le tableau des coordonées 
-    if(version=="1"):
-        Centroide1=random.randint(0, 400)
-        Centroide2=random.randint(0, 400)
-        Centroide3=random.randint(0, 400)
-        Centroide4=random.randint(0, 400)
-    elif(version=="2"):
-        Centroide1=random.randint(0, 60000)
-        Centroide2=random.randint(0, 60000)
-        Centroide3=random.randint(0, 60000)
-        Centroide4=random.randint(0, 60000)
-    print("Les centroides au choisie les coordonees de tableau : "+str(Centroide1)+" "+str(Centroide2)+" "+str(Centroide3)+" "+str(Centroide4))
+def InitialisationCentroids(NbCentroides=4,version="1"): #Tire au sort les index dans le tableau des coordonées 
     coordonnes_centroids_index_tableau=[]
-    coordonnes_centroids_index_tableau.append(Centroide1)
-    coordonnes_centroids_index_tableau.append(Centroide2)
-    coordonnes_centroids_index_tableau.append(Centroide3)
-    coordonnes_centroids_index_tableau.append(Centroide4)
+    TirageDuCentroide=0
+    for i in range(0,NbCentroides,1):
+        if(version=="1"):
+            TirageDuCentroide=random.randint(0,400)
+            while TirageDuCentroide in coordonnes_centroids_index_tableau:
+                TirageDuCentroide=random.randint(0,400)
+
+            coordonnes_centroids_index_tableau.append(TirageDuCentroide)
+        elif(version=="2"):
+            TirageDuCentroide=random.randint(0,60000)
+            while TirageDuCentroide in coordonnes_centroids_index_tableau:
+                TirageDuCentroide=random.randint(0,60000)
+
+            coordonnes_centroids_index_tableau.append(TirageDuCentroide)
+
+            
     return coordonnes_centroids_index_tableau
 
 
@@ -154,7 +131,7 @@ def draw2D(samples, size=10, drawLinks=True):
 #AssignationPointsToCluster(test,coordonnes_centroids_float_tableau)
 
 
-def CalculDistance1Point(point,AllCentroids,version="1"):
+def CalculDistance1Point(point,AllCentroids,version="1"): #Version marche avec X centroides
     choix=[]
     for centroids in AllCentroids:
         firstSquare=math.pow(centroids[0]-point[0],2) #(x2 -x1)²
@@ -193,72 +170,67 @@ def AssignationPointsToCluster(points,TableauCentroids,version="1"):
         
 
 
-def ReturnNbPointWithCoo(points,AllCentroids,version="1"):
+def ReturnNbPointWithCoo(points,AllCentroids,version="1"): #A modif pour fonctionner avec X centroides
     #print("Voici les points : ")
     #print(points)
-    Nb_Point=[0,0,0,0]
-    CooX_Sum=[0.0,0.0,0.0,0.0]
-    CooY_Sum=[0.0,0.0,0.0,0.0]
-    CooZ_Sum=[0.0,0.0,0.0,0.0]
+    Nb_Point=[]
+    CooX_Sum=[]
+    CooY_Sum=[]
+    CooZ_Sum=[]
+    for i in range(0,len(AllCentroids),1):
+        Nb_Point.append(0)
+        CooX_Sum.append(0)
+        CooY_Sum.append(0)
+        CooZ_Sum.append(0)
+    
     for point in points:
        # print(version)
         #print(point)
         #print(AllCentroids)
+        # if(version=="1"):
+        #     if(point[2]==AllCentroids[0][0] and point[3]==AllCentroids[0][1] ): #point 2 -> position x du centroids associé
+        #                                                                         #point 3 -> position y du centroid associé
+        #         Nb_Point[0]=Nb_Point[0]+1
+        #         CooX_Sum[0]=CooX_Sum[0]+point[0]
+        #         CooY_Sum[0]=CooY_Sum[0]+point[1]
+        #     elif(point[2]==AllCentroids[1][0] and point[3]==AllCentroids[1][1] ):
+        #         Nb_Point[1]=Nb_Point[1]+1
+        #         CooX_Sum[1]=CooX_Sum[1]+point[0]
+        #         CooY_Sum[1]=CooY_Sum[1]+point[1]
+        #     elif(point[2]==AllCentroids[2][0] and point[3]==AllCentroids[2][1] ):
+        #         Nb_Point[2]=Nb_Point[2]+1
+        #         CooX_Sum[2]=CooX_Sum[2]+point[0]
+        #         CooY_Sum[2]=CooY_Sum[2]+point[1]
+        #     elif(point[2]==AllCentroids[3][0] and point[3]==AllCentroids[3][1] ):
+        #         Nb_Point[3]=Nb_Point[3]+1
+        #         CooX_Sum[3]=CooX_Sum[3]+point[0]
+        #         CooY_Sum[3]=CooY_Sum[3]+point[1]
         if(version=="1"):
-            if(point[2]==AllCentroids[0][0] and point[3]==AllCentroids[0][1] ): #point 2 -> position x du centroids associé
-                                                                                #point 3 -> position y du centroid associé
-                Nb_Point[0]=Nb_Point[0]+1
-                CooX_Sum[0]=CooX_Sum[0]+point[0]
-                CooY_Sum[0]=CooY_Sum[0]+point[1]
-            elif(point[2]==AllCentroids[1][0] and point[3]==AllCentroids[1][1] ):
-                Nb_Point[1]=Nb_Point[1]+1
-                CooX_Sum[1]=CooX_Sum[1]+point[0]
-                CooY_Sum[1]=CooY_Sum[1]+point[1]
-            elif(point[2]==AllCentroids[2][0] and point[3]==AllCentroids[2][1] ):
-                Nb_Point[2]=Nb_Point[2]+1
-                CooX_Sum[2]=CooX_Sum[2]+point[0]
-                CooY_Sum[2]=CooY_Sum[2]+point[1]
-            elif(point[2]==AllCentroids[3][0] and point[3]==AllCentroids[3][1] ):
-                Nb_Point[3]=Nb_Point[3]+1
-                CooX_Sum[3]=CooX_Sum[3]+point[0]
-                CooY_Sum[3]=CooY_Sum[3]+point[1]
+            for i in range(0,len(AllCentroids),1):
+                 if(point[2]==AllCentroids[i][0] and point[3]==AllCentroids[i][1] ):
+                     #point 2 -> position x du centroids associé
+        #                                                                         #point 3 -> position y du centroid associé
+                    Nb_Point[i]=Nb_Point[i]+1
+                    CooX_Sum[i]=CooX_Sum[i]+point[0]
+                    CooY_Sum[i]=CooY_Sum[i]+point[1]
             
         else:
             #print("Cas de la 3d")
             #print(point)
-            #print(AllCentroids)
-            if(point[3]==AllCentroids[0][0] and point[4]==AllCentroids[0][1] and point[5]==AllCentroids[0][2] ): #point 2 -> position x du centroids associé
-                                                                                #point 3 -> position y du centroid associé
-                                                                                #point4 -> position y du centroid
-                Nb_Point[0]=Nb_Point[0]+1
-                CooX_Sum[0]=CooX_Sum[0]+point[0]
-                CooY_Sum[0]=CooY_Sum[0]+point[1]
-                CooZ_Sum[0]=CooZ_Sum[0]+point[2]
-            elif(point[3]==AllCentroids[1][0] and point[4]==AllCentroids[1][1] and point[5]==AllCentroids[1][2] ):
-                Nb_Point[1]=Nb_Point[1]+1
-                CooX_Sum[1]=CooX_Sum[1]+point[0]
-                CooY_Sum[1]=CooY_Sum[1]+point[1]
-                CooZ_Sum[1]=CooZ_Sum[1]+point[2]
-            elif(point[3]==AllCentroids[2][0] and point[4]==AllCentroids[2][1] and point[5]==AllCentroids[2][2] ):
-                Nb_Point[2]=Nb_Point[2]+1
-                CooX_Sum[2]=CooX_Sum[2]+point[0]
-                CooY_Sum[2]=CooY_Sum[2]+point[1]
-                CooZ_Sum[2]=CooZ_Sum[2]+point[2]
-            elif(point[3]==AllCentroids[3][0] and point[4]==AllCentroids[3][1] and point[5]==AllCentroids[3][2] ):
-                Nb_Point[3]=Nb_Point[3]+1
-                CooX_Sum[3]=CooX_Sum[3]+point[0]
-                CooY_Sum[3]=CooY_Sum[3]+point[1]
-                CooZ_Sum[3]=CooZ_Sum[3]+point[2]
-            else:
-                #print("bug")
-                continue
-            #print(Nb_Point)
+            for i in range(0,len(AllCentroids),1):
+                 if(point[2]==AllCentroids[i][0] and point[3]==AllCentroids[i][1] and point[4]==AllCentroids[i][2] ):
+                     #point 2 -> position x du centroids associé
+        #                                                                         #point 3 -> position y du centroid associé
+                    Nb_Point[i]=Nb_Point[i]+1
+                    CooX_Sum[i]=CooX_Sum[i]+point[0]
+                    CooY_Sum[i]=CooY_Sum[i]+point[1]
+                    CooZ_Sum[i]=CooZ_Sum[i]+point[2]
 
-    # print("Affichage des découpages")
-    # print(Nb_Point)
-    # print(CooX_Sum)
-    # print(CooY_Sum)
-    # print(CooZ_Sum)
+    print("Affichage des découpages")
+    print(Nb_Point)
+    print(CooX_Sum)
+    print(CooY_Sum)
+    print(CooZ_Sum)
     return Nb_Point,CooX_Sum,CooY_Sum,CooZ_Sum
    
     
@@ -319,7 +291,7 @@ def drawV2(samples, windowSize=1000, offset=(0, 0, 0)):
 	pg.exec()
 
 
-def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY,SumCooZ,version="1"):
+def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY,SumCooZ,version="1"): #Marche avec X centroides
     #print("Calcul de la nouvelle position")
     new_centroids = []
     index = 0
@@ -393,19 +365,19 @@ def IterationAlgo():
             print("2. Version 3D")
 
            # version = input("Votre choix : ")
-            version="2"
+            version="1"
             if version == "1":
                 print("Vous avez choisi la version 2D.")
                 test=lire_fichier_csv("2d_data.csv") #Lecture des données
                 test=test[1:]
                  
                 test=transormeLectureInTableauFloat(test) #Transformation en float (working in 3d)
-                #print("Avant transformation float")
+                print("Avant transformation float")
             # print(test)
                # print("Avant init des centroids")
-                coordonnes_centroids_index_tableau=InitialisationCentroids() #Initialisation des centroids (working in 3d)
+                coordonnes_centroids_index_tableau=InitialisationCentroids(10,"1") #Initialisation des centroids (working in 3d)
                 
-                #print(coordonnes_centroids_index_tableau)
+                print(coordonnes_centroids_index_tableau)
                 coordonnes_centroids_float_tableau=TransformeToCooFloat(coordonnes_centroids_index_tableau,test) #Float des centroids
                 print("Apres la transformation en float des centroids")
                 print(coordonnes_centroids_float_tableau)
@@ -439,7 +411,7 @@ def IterationAlgo():
                 print("Association des points aux centroids ")
                 test=AssignationPointsToCluster(test,coordonnes_centroids_float_tableau,version) #On assigne tous les points à un cluster (modif pour 3d)
                 #print(test)
-                drawV2(test,1920)
+                drawV2(test,1920) #Init fonctionne avec X clusters
             else:
                 print("Choix invalide.")
            
