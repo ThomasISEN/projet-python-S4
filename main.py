@@ -18,17 +18,12 @@ import pyqtgraph.examples
 
 
 
+"""
+Fonction lire_fichier_csv:
+    params : nom_fichier -> On passe en argument le nom du fichier à ouvrir 
+    use : ouvre le fichier contenant les datas à utiliser
 
-
-def main_fct():
-    print("Compilation done")
-  
-    
-
-
-main_fct()
-
-
+"""
 def lire_fichier_csv(nom_fichier):
     donnees = []
     with open(nom_fichier, newline='') as fichier_csv:
@@ -39,7 +34,12 @@ def lire_fichier_csv(nom_fichier):
     return donnees
 
 
+"""
+Fonction transormeLectureInTableauFloat:
+    params : tableau_str -> On passe en argument le tableau (alors en string à cause de la lecture)
+    use : Transforme les datas string en datas float exploitable pour l'algo 
 
+"""
 
 def transormeLectureInTableauFloat(tableau_str):
     print("Transformation en cours")
@@ -47,27 +47,33 @@ def transormeLectureInTableauFloat(tableau_str):
     for sous_tableau in tableau_str:
         nouveau_sous_tableau = []
         for valeur in sous_tableau:
-            nouveau_sous_tableau.append(float(valeur))
-        nouveau_tableau_float.append(nouveau_sous_tableau)
+            nouveau_sous_tableau.append(float(valeur)) #transformation de chaque valeur en float
+        nouveau_tableau_float.append(nouveau_sous_tableau)  #Nouveau tableau
     return nouveau_tableau_float
 
 
 
 
+"""
+Fonction InitialisationCentroids:
+    params : NbCentroides -> Le nombres de centroides que l'on veut dans l'algo (valeur par defaut = 4)
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Choisit X points au hasard (et tous différent). Le nombre representera l'index d'un point dans le tableau de data
 
+"""
 
 def InitialisationCentroids(NbCentroides=4,version="1"): #Tire au sort les index dans le tableau des coordonées 
     coordonnes_centroids_index_tableau=[]
     TirageDuCentroide=0
     for i in range(0,NbCentroides,1):
         if(version=="1"):
-            TirageDuCentroide=random.randint(0,400)
+            TirageDuCentroide=random.randint(0,400) #Algo mock
             while TirageDuCentroide in coordonnes_centroids_index_tableau:
                 TirageDuCentroide=random.randint(0,400)
 
             coordonnes_centroids_index_tableau.append(TirageDuCentroide)
         elif(version=="2"):
-            TirageDuCentroide=random.randint(0,60000)
+            TirageDuCentroide=random.randint(0,60000) #version 3d
             while TirageDuCentroide in coordonnes_centroids_index_tableau:
                 TirageDuCentroide=random.randint(0,60000)
 
@@ -76,6 +82,15 @@ def InitialisationCentroids(NbCentroides=4,version="1"): #Tire au sort les index
             
     return coordonnes_centroids_index_tableau
 
+
+
+"""
+Fonction InitialisationCentroids:
+    params : coordonnes_centroids_index -> Le tableau d'index de tous les cenoitrdes
+             TableauFull -> le tableau de tous les datas
+    use : Transforme le tableau d'index en tableau de coordonnés 
+
+"""
 
 def TransformeToCooFloat(coordonnes_centroids_index,TableauFull):
     print("Changement en float")
@@ -93,7 +108,11 @@ def TransformeToCooFloat(coordonnes_centroids_index,TableauFull):
 
 
 
-#sample = le tableau de co
+"""
+Fonction draw2D:
+    Old function
+
+"""
 def draw2D(samples, size=10, drawLinks=True):
 	# Formatting the data:
 	X, Y, links, centroids = [], [], [], set()
@@ -132,38 +151,47 @@ def draw2D(samples, size=10, drawLinks=True):
 
 
 
-#AssignationPointsToCluster(test,coordonnes_centroids_float_tableau)
 
+"""
+Fonction CalculDistance1Point:
+    params : points -> Le tableau de toutes les datas
+             AllCentroids -> le tableau des coordonnées des centroides
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Renvoie l'index de la plus petite distance (represente donc un centroide), on calcule la distance d'un point par rapport à tous les centroides
+
+"""
 
 def CalculDistance1Point(point,AllCentroids,version="1"): #Version marche avec X centroides
     choix=[]
     for centroids in AllCentroids:
         firstSquare=math.pow(centroids[0]-point[0],2) #(x2 -x1)²
-        
-        #print(("Premiere distance "+str(firstSquare)))
         SecondeSquare=math.pow(centroids[1]-point[1],2)
-        #print("Seconde distance "+str(SecondeSquare))
+        
         if(version=="2"):
             ThirdSquare=math.pow(centroids[2]-point[2],2)
             calcul1=math.sqrt(firstSquare+SecondeSquare+ThirdSquare)
         else:
             calcul1=math.sqrt(firstSquare+SecondeSquare)
         choix.append(calcul1)
-    #print(choix)
-    #print(min(choix))
-    #print(choix.index(min(choix)))
+    
     return choix.index(min(choix))
 
 
 
+"""
+Fonction AssignationPointsToCluster:
+    params : points -> Le tableau de toutes les datas
+             AllCentroids -> le tableau des coordonnées des centroides
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Assigne lors de la première itération tous les points au centroides le plus proche
+"""
 def AssignationPointsToCluster(points,TableauCentroids,version="1"):
     #print(len(points))
 
     for i in range(len(points)):
-        # Assignation de chaque point au cluster le plus proche
-        ValeurAssignation=CalculDistance1Point(points[i],TableauCentroids) #Verif que le calcul prend également en compte les coos Z
-        #print(ValeurAssignation)
-        #print(TableauCentroids[ValeurAssignation][0])
+
+        ValeurAssignation=CalculDistance1Point(points[i],TableauCentroids) 
+
         points[i].append(TableauCentroids[ValeurAssignation][0])
         points[i].append(TableauCentroids[ValeurAssignation][1])
         if(version=="2"):
@@ -173,7 +201,13 @@ def AssignationPointsToCluster(points,TableauCentroids,version="1"):
        
         
 
-
+"""
+Fonction ReturnNbPointWithCoo:
+    params : points -> Le tableau de toutes les datas
+             AllCentroids -> le tableau des coordonnées des centroides
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Permet de renvoiyer tous les calculs necessaires pour modifier la position des clusters (somme en X,Y,Z et le nombre de point assigné à chaque centroides)
+"""
 def ReturnNbPointWithCoo(points,AllCentroids,version="1"): 
     print("Voici les points : ")
     #print(points)
@@ -200,31 +234,24 @@ def ReturnNbPointWithCoo(points,AllCentroids,version="1"):
                     CooY_Sum[i]=CooY_Sum[i]+point[1]
             
         else:
-            #print("Cas de la 3d")
-            #print(point)
-            #print(AllCentroids)
+
             for i in range(0,len(AllCentroids),1): #2=len de centroides
-                 #print("Pas verif")
-                 #print(point)
-                 #print(AllCentroids)
+
                  if(point[3]==AllCentroids[i][0] and point[4]==AllCentroids[i][1] and point[5]==AllCentroids[i][2] ):
-                     #point 2 -> position x du centroids associé
-                    #print("Entrez verif")                                                    #point 3 -> position y du centroid associé
+                                                   #point 3 -> position y du centroid associé
                     Nb_Point[i]=Nb_Point[i]+1
                     CooX_Sum[i]=CooX_Sum[i]+point[0]
                     CooY_Sum[i]=CooY_Sum[i]+point[1]
                     CooZ_Sum[i]=CooZ_Sum[i]+point[2]
 
-    # print("Affichage des découpages")
-    # print(Nb_Point)
-    # print(CooX_Sum)
-    # print(CooY_Sum)
-    # print(CooZ_Sum)
     return Nb_Point,CooX_Sum,CooY_Sum,CooZ_Sum
    
     
 
-
+"""
+Fonction drawV2:
+   Fonction de dessin
+"""
 
 def drawV2(samples, windowSize=1000, offset=(0, 0, 0)):
     random.seed(42)
@@ -280,6 +307,19 @@ def drawV2(samples, windowSize=1000, offset=(0, 0, 0)):
     w.show()
     pg.exec()
 
+
+"""
+Fonction CalculNewPosCentroids:
+    params : points -> Le tableau de toutes les datas
+             AllCentroids -> le tableau des coordonnées des centroides
+             version -> en fonction de l'algo en 2d ou en 3d 
+             Nb_Point -> Tableau contenant le nombre de point associé à chaque centroides
+             SumCooX -> Tableau contenant la somme des X associé à chaque centroides
+             SumCooY -> Tableau contenant la somme des Y associé à chaque centroides
+             SumCooZ -> Tableau contenant la somme des Z associé à chaque centroides
+    use : Recalcule la position de chaque centroides par rapport au arguments
+"""
+
 def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY,SumCooZ,version="1"): #Marche avec X centroides
     #print("Calcul de la nouvelle position")
     
@@ -318,6 +358,13 @@ def CalculNewPosCentroids(points,AllCentroids,Nb_Point,SumCooX,SumCooY,SumCooZ,v
 
 #Où N_k est le nombre de points appartenant au cluster k.
     
+"""
+Fonction ModifPosClusterForPoint:
+    params : points -> Le tableau de toutes les datas
+             AllCentroids -> le tableau des coordonnées des centroides
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Permet de reassigner à chaque points son centroides le plus proche
+"""
 def ModifPosClusterForPoint(points,AllCentroids,version="1"):
 
     if(version=="1"):
@@ -344,7 +391,11 @@ def ModifPosClusterForPoint(points,AllCentroids,version="1"):
 
 
 
-
+"""
+Fonction IterationAlgo:
+    d
+    use : Boucle principal permettant de faire tourner
+"""
 
 def IterationAlgo():
     TableauDistanceMoyenne=[]
@@ -464,12 +515,19 @@ def IterationAlgo():
                 #drawV2(test,1920)
                 ResultatSomme=EvalutionQualite(test,coordonnes_centroids_float_tableau,"2")
                 TableauDistanceMoyenne.append(ResultatSomme)
-
+    drawV2(test,1920)
     GraphiqueEvolutionScore(TableauDistanceMoyenne,nombreIteration)
     SauvegardeDesPoints(test,ResultatSomme,version)
     #Avant d'écrire il faut d'abord lire la donnée de la première ligne pour savoir si la somme est plus petite ou pas (Meilleur score)
     
 
+"""
+Fonction SauvegardeDesPoints:
+    params : points -> Le tableau de toutes les datas
+             LastResultat -> la valeur écrite dans le fichier representant l'ancien score
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Permet de sauvegarder les datas et leurs centroides seulement si le score est plus petit que celui deja ecrit dans le fichier
+"""
 
 def SauvegardeDesPoints(points,LastResultat,version="1"):
     if(version=="1"):
@@ -488,7 +546,13 @@ def SauvegardeDesPoints(points,LastResultat,version="1"):
             write_csv_file("EcritureDonnees3d",points,LastResultat)
 
                     
-
+"""
+Fonction EvalutionQualite:
+    params : points -> Le tableau de toutes les datas
+             AllCentroids -> le tableau des coordonnées des centroides
+             version -> en fonction de l'algo en 2d ou en 3d 
+    use : Permet de calcul un "score" pour savoir si l'algo a bien fonctionner ou pas
+"""
 
 def EvalutionQualite(points,AllCentroids,version="1"):
     NbPoint=len(points)
@@ -517,7 +581,13 @@ def EvalutionQualite(points,AllCentroids,version="1"):
 
 
 
-
+"""
+Fonction write_csv_file:
+    params : NomFichier -> Le nom du fichier ou l'on veut écrire
+             data -> Le tableau de données 
+             ValeurSomme -> Le dernier score calculé (et donc normalement le plus petit)
+    use : Ecrit dans le fichier pour sauvegarder les datas
+"""
 
 def write_csv_file(NomFichier, data,ValeurSomme):
     # Si le fichier n'existe pas, on le crée
@@ -530,7 +600,14 @@ def write_csv_file(NomFichier, data,ValeurSomme):
         Ecriture.writerow(construction)
         for points in data:
             Ecriture.writerow(points)
-   
+
+"""
+Fonction write_csv_file:
+    params : NomFichier -> Le nom du fichier ou l'on veut écrire
+
+    use : Lit seulement la première ligne du fichier de sauvegarde des datas pour récuperer l'ancien score
+"""
+
 def read_first_line_csv(NomFichier):
     with open(NomFichier, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
@@ -538,7 +615,13 @@ def read_first_line_csv(NomFichier):
         print(first_row)
         return first_row
 
+"""
+Fonction write_csv_file:
+    params : TableauScore -> Le tableau contenant tous les scores pendants les itérations
+             NombreIteration -> le nombre d'itérations fait par l'algo dans la boucle principal
 
+    use : Fait un petit graphique pour voir l'évolution du score à la fin de la partie
+"""
 def GraphiqueEvolutionScore(TableauScore,NombreIteration):
     print("Affichage du graphique")
     print(TableauScore)
