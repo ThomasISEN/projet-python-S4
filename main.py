@@ -348,7 +348,8 @@ def ModifPosClusterForPoint(points,AllCentroids,version="1"):
 
 def IterationAlgo():
     TableauDistanceMoyenne=[]
-    for i in range(0,4,1):
+    nombreIteration=100
+    for i in range(0,nombreIteration,1):
 
         if(i==0):
             print("Initialisation de l'algo ")
@@ -464,7 +465,7 @@ def IterationAlgo():
                 ResultatSomme=EvalutionQualite(test,coordonnes_centroids_float_tableau,"2")
                 TableauDistanceMoyenne.append(ResultatSomme)
 
-    GraphiqueEvolutionScore(TableauDistanceMoyenne,4)
+    GraphiqueEvolutionScore(TableauDistanceMoyenne,nombreIteration)
     SauvegardeDesPoints(test,ResultatSomme,version)
     #Avant d'écrire il faut d'abord lire la donnée de la première ligne pour savoir si la somme est plus petite ou pas (Meilleur score)
     
@@ -548,6 +549,9 @@ def GraphiqueEvolutionScore(TableauScore,NombreIteration):
     plt.plot(x, TableauScore)
     plt.show()
     plt.close()
+
+
+
 
 IterationAlgo()
 
